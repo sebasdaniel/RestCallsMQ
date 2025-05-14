@@ -2,6 +2,7 @@ package com.demo.sporty.controller;
 
 import com.demo.sporty.controller.dto.StatusRequest;
 import com.demo.sporty.model.Event;
+import com.demo.sporty.service.EventService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
