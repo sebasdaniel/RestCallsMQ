@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class ScheduledConcurrentApiCaller {
@@ -32,22 +31,21 @@ public class ScheduledConcurrentApiCaller {
         }
 
         scheduler = Executors.newScheduledThreadPool(eventIds.size());
-        AtomicInteger urlIndex = new AtomicInteger(0);
 
-        Runnable apiCallTask = () -> {
-            int currentIndex = urlIndex.getAndIncrement();
-            if (currentIndex < eventIds.size()) {
+        for (Integer id : eventIds) {
+            //AtomicInteger urlIndex = new AtomicInteger(0);
 
+            Runnable apiCallTask = () -> {
                 try {
-                    var eventResult = repository.getEventResult(eventIds.get(currentIndex));
+                    var eventResult = repository.getEventResult(id);
                     producer.send(MESSAGE_KEY, eventResult);
                 } catch (Exception e) {
                     System.err.println(e.getMessage());
                 }
-            }
-        };
+            };
 
-        // Schedule the task to run every 10 seconds
-        scheduler.scheduleAtFixedRate(apiCallTask, 0, 10, TimeUnit.SECONDS);
+            // Schedule the task to run every 10 seconds
+            scheduler.scheduleAtFixedRate(apiCallTask, 0, 10, TimeUnit.SECONDS);
+        }
     }
 }
