@@ -17,6 +17,11 @@ public class EventServiceImpl implements EventService {
     @Autowired
     private ScheduledConcurrentApiCaller apiCallScheduler;
 
+    public EventServiceImpl() {
+        events.put(1, false);
+        events.put(2, false);
+    }
+
     @Override
     public void update(Event event) {
         if (events.containsKey(event.getEventId())) {
