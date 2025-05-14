@@ -33,8 +33,6 @@ public class ScheduledConcurrentApiCaller {
         scheduler = Executors.newScheduledThreadPool(eventIds.size());
 
         for (Integer id : eventIds) {
-            //AtomicInteger urlIndex = new AtomicInteger(0);
-
             Runnable apiCallTask = () -> {
                 try {
                     var eventResult = repository.getEventResult(id);
