@@ -1,5 +1,7 @@
 package com.demo.sporty.service;
 
+import com.demo.sporty.repository.EventRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -19,6 +21,9 @@ public class ScheduledConcurrentApiCaller {
 
     private static ScheduledExecutorService scheduler;
 
+    @Autowired
+    private EventRepository repository;
+
     public void runScheduledCalls(List<Integer> eventIds) throws InterruptedException {
 
         if (scheduler != null) {
@@ -27,23 +32,16 @@ public class ScheduledConcurrentApiCaller {
         }
 
         scheduler = Executors.newScheduledThreadPool(eventIds.size());
-        HttpClient httpClient = HttpClient.newHttpClient();
         AtomicInteger urlIndex = new AtomicInteger(0);
 
         Runnable apiCallTask = () -> {
             int currentIndex = urlIndex.getAndIncrement();
             if (currentIndex < eventIds.size()) {
-                String apiUrl = BASE_URL + eventIds.get(currentIndex);
-                try {
-                    HttpRequest request = HttpRequest.newBuilder()
-                            .uri(URI.create(apiUrl))
-                            .build();
 
-                    HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-                    System.out.println("Scheduled URL: " + apiUrl + ", Status Code: " + response.statusCode() + ", Time: " + java.time.LocalDateTime.now());
-                    // Process the response body if needed: response.body()
+                try {
+                    var eventResult = repository.getEventResult(eventIds.get(currentIndex));
                 } catch (Exception e) {
-                    System.err.println("Error calling scheduled URL " + apiUrl + ": " + e.getMessage() + ", Time: " + java.time.LocalDateTime.now());
+                    System.err.println(e);
                 }
             }
         };
