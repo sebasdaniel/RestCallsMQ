@@ -4,6 +4,7 @@ Testing REST calls with Message Queues
 # Config
 ## Apache Kafka
 You could use a local instance of Apache Kafka. The easiest way is to run a Docker instance.
+
 - Create a file called docker-compose.yml with the next content:
 ``` yml
 version: '3'
@@ -30,8 +31,11 @@ services:
       - KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR=1
 ```
 - Then run the next command:
+
 `docker-compose up -d`
+
 - To create the topic run these commands:
+
 `docker exec -it kafka bash`
 
 `kafka-topics.sh --bootstrap-server localhost:9092 --create --topic event.update`
@@ -51,10 +55,10 @@ curl --location 'localhost:8080/events/status' \
     "status": true
 }'
 ```
-And then you can change the values ==eventId== and ==status==. You can also import it in Postman, which is my recommendation.
+And then you can change the values ***eventId*** and ***status***. You can also import it in Postman, which is my recommendation.
 
 ## Run unit test
-The unit tests are located in the ==/src/test== folder. The basic unit test, that test the main logic, is EventServiceImplTest.
+The unit tests are located in the */src/test* folder. The basic unit test, that test the main logic, is EventServiceImplTest.
 I suggest to run this test with an IDE because is the easiest way to do it.
 
 # Project structure
