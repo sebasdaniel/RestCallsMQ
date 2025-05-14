@@ -1,13 +1,10 @@
 package com.demo.sporty.service;
 
 import com.demo.sporty.repository.EventRepository;
+import com.demo.sporty.service.producer.ProducerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -17,12 +14,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service
 public class ScheduledConcurrentApiCaller {
 
-    private static final String BASE_URL = "https://6823dee065ba058033981fa3.mockapi.io/api/v1/event/";
+    private static final String MESSAGE_KEY = "result";
 
     private static ScheduledExecutorService scheduler;
 
     @Autowired
     private EventRepository repository;
+
+    @Autowired
+    private ProducerService producer;
 
     public void runScheduledCalls(List<Integer> eventIds) throws InterruptedException {
 
@@ -40,8 +40,9 @@ public class ScheduledConcurrentApiCaller {
 
                 try {
                     var eventResult = repository.getEventResult(eventIds.get(currentIndex));
+                    producer.send(MESSAGE_KEY, eventResult);
                 } catch (Exception e) {
-                    System.err.println(e);
+                    System.err.println(e.getMessage());
                 }
             }
         };
