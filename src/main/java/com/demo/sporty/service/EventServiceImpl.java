@@ -14,10 +14,11 @@ public class EventServiceImpl implements EventService {
 
     private static final Map<Integer, Boolean> events = new TreeMap<>();
 
-    @Autowired
-    private ScheduledConcurrentApiCaller apiCallScheduler;
+    private final ScheduledConcurrentApiCaller apiCallScheduler;
 
-    public EventServiceImpl() {
+    @Autowired
+    public EventServiceImpl(ScheduledConcurrentApiCaller apiCallScheduler) {
+        this.apiCallScheduler = apiCallScheduler;
         events.put(1, false);
         events.put(2, false);
     }
